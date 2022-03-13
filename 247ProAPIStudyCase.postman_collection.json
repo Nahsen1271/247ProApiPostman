@@ -1,0 +1,397 @@
+{
+	"info": {
+		"_postman_id": "39aece37-6cc5-49da-9849-d89118ce5bd3",
+		"name": "247ProAPIStudyCase",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "account",
+			"item": [
+				{
+					"name": "positiveTesting",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"jsonData= JSON.parse(responseBody)\r",
+									"\r",
+									"if(pm.response.code==200){\r",
+									"postman.setEnvironmentVariable(\"loginEmail\",jsonData.resultData.loginEmail)\r",
+									"postman.setEnvironmentVariable(\"JWT\",jsonData.resultData.accessToken.accessToken)\r",
+									"postman.setEnvironmentVariable(\"refreshToken\",jsonData.resultData.accessToken.refreshToken)\r",
+									"\r",
+									"}\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"isSuccess value should equal true\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.isSuccess).to.eql(true);\r",
+									"});\r",
+									"pm.test(\"resultMessage value should equal Success\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.resultMessage).to.eql(\"Success\");\r",
+									"});\r",
+									"pm.test(\"loginEmail value should equal Email Enviranment Variable\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.resultData.loginEmail).to.eql(pm.environment.get(\"Email\"));\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/account?Email={{Email}}&Password={{Password}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"account"
+							],
+							"query": [
+								{
+									"key": "Email",
+									"value": "{{Email}}"
+								},
+								{
+									"key": "Password",
+									"value": "{{Password}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "negativeTestings",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"isSuccess value should equal false\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.isSuccess).to.eql(false);\r",
+									"});\r",
+									"pm.test(\"resultMessage value should equal System.Collections.Generic.List`1[System.String]'\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.resultMessage).to.eql(\"System.Collections.Generic.List`1[System.String]\");\r",
+									"});\r",
+									"pm.test(\"resultData value should equal null\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.resultData).to.eql(null);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/account?Email={{emailNegative}}&Password={{pwNegative}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"account"
+							],
+							"query": [
+								{
+									"key": "Email",
+									"value": "{{emailNegative}}"
+								},
+								{
+									"key": "Password",
+									"value": "{{pwNegative}}"
+								}
+							]
+						},
+						"description": "This can be run \r\n1. End to end using environment variable \r\n2. Data driven using testData.csv file"
+					},
+					"response": []
+				},
+				{
+					"name": "account/refreshToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"isSuccess value should equal 'true'\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.isSuccess).to.eql(true);\r",
+									"});\r",
+									"pm.test(\"resultMessage value should equal 'Success'\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.resultMessage).to.eql(\"Success\");\r",
+									"});\r",
+									"pm.test(\"tokenType value should equal '247ProAccessToken'\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.resultData.tokenType).to.eql(\"247ProAccessToken\");\r",
+									"});\r",
+									"pm.test(\"Access token value should not equal to JWT Enviranment Variable\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.resultData.accessToken).to.is.not.eql(pm.environment.get(\"JWT\"));\r",
+									"});\r",
+									"pm.test(\"refreshToken value should not equal to refreshToken Enviranment Variable\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.resultData.accessToken).to.is.not.eql(pm.environment.get(\"refreshToken\"));\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/account/refreshtoken?Email={{Email}}&Refresh_Token={{refreshToken}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"account",
+								"refreshtoken"
+							],
+							"query": [
+								{
+									"key": "Email",
+									"value": "{{Email}}"
+								},
+								{
+									"key": "Refresh_Token",
+									"value": "{{refreshToken}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{JWT}}",
+						"type": "string"
+					}
+				]
+			}
+		},
+		{
+			"name": "Estimate",
+			"item": [
+				{
+					"name": "id tests",
+					"item": [
+						{
+							"name": "idGetEstimateUUID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "idDeleteEstimate",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "text/plain",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"title\": \"<string>\",\r\n  \"description\": \"<string>\",\r\n  \"adress\": \"<string>\",\r\n  \"id\": \"<uuid>\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/Estimate/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"Estimate",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "<uuid>"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "idDeleteEstimate",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "text/plain"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/Estimate/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"Estimate",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "<uuid>"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "getEstimate",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/Estimate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Estimate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "postEstimate",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Estimate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Estimate"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{JWT}}",
+						"type": "string"
+					}
+				]
+			}
+		}
+	]
+}
